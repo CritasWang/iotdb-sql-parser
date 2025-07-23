@@ -1,6 +1,6 @@
 # iotdb-sql-parser
 
-[![NPM version][npm-image]][npm-url] [![NPM downloads][download-img]][download-url] [![Chat][online-chat-img]][online-chat-url]
+[![NPM version][npm-image]][npm-url] [![NPM downloads][download-img]][download-url]
 
 [npm-image]: https://img.shields.io/npm/v/iotdb-sql-parser.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/iotdb-sql-parser
