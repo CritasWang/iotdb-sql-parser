@@ -484,4 +484,6 @@ iotdb-sql-parser 的自动补全功能依赖于 [antlr4-c3](https://github.com/m
 
 ## 许可证
 
-[MIT](./LICENSE)
+本项目采用 [Apache License 2.0](./LICENSE) 许可证。
+
+本项目包含从 [DTStack/dt-sql-parser](https://github.com/DTStack/dt-sql-parser) 派生的代码，原项目采用 MIT 许可证。

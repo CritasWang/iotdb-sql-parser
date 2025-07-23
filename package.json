@@ -33,7 +33,7 @@
     "benchmark": "NODE_OPTIONS=--max_old_space_size=4096 && node --no-warnings ./scripts/benchmark.js",
     "benchmark:release": "node --no-warnings ./scripts/benchmark.js --release"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "antlr4-c3": "3.3.7",
     "antlr4ng": "2.0.11"
