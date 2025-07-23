@@ -1,3 +1,0 @@
-DELETE FROM tbl;
-
-DELETE FROM tbl1 WHERE id = 1;

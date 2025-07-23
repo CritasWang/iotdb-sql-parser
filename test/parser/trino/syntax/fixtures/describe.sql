@@ -1,6 +1,0 @@
--- DESCRIBE INPUT
-DESCRIBE INPUT myquery;
--- DESCRIBE OUTPUT
-DESCRIBE OUTPUT myquery;
--- DESCRIBLE  table_name
-DESCRIBE table_name;

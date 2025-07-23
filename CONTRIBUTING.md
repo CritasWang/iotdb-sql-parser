@@ -1,118 +1,129 @@
-# CONTRIBUTING
+# 贡献指南
 
-English | [简体中文](./CONTRIBUTING-zh_CN.md)
+简体中文
 
-## Development
+> **项目说明**: 本项目基于 [DTStack/dt-sql-parser](https://github.com/DTStack/dt-sql-parser) 修改，专注于 IoTDB SQL 解析功能。
+
+## 开发
 
 > [!Tip]
-> Before starting, you need to make sure your local Java environment is set up, otherwise you will not be able to generate from the grammar file. You can check it by running `java --version`.
+> 在开始之前，你需要先确保你本地的 java 环境已经设置好了，否则你将无法从语法文件中生成。你可以运行 `java --version` 来检查。
 
--   **Install dependencies**
+-   **安装依赖**
 
     ```bash
     pnpm install
     ```
 
--   **Compile g4 Files**
+-   **编译 g4 文件**
 
     ```bash
-    # Compile all g4 files
+    # 编译全部 g4 文件
     pnpm antlr4
-    # Compile for a specific language
-    pnpm antlr4 --lang mysql
+    # 指定编译 IoTDB 相关语言
+    pnpm antlr4 --lang iotdb-table
+    pnpm antlr4 --lang iotdb-tree
     ```
 
--   **Run Unit Tests**
+-   **运行单元测试**
 
     ```bash
     pnpm test
     ```
 
--   **Run Benchmark Tests**
+-   **运行性能基准测试**
 
     ```bash
     pnpm benchmark
     ```
 
-## Directory Overview
+## 源码目录
 
--   `src/grammar`: Contains g4 files (grammar files)
--   `src/lib`: Generated files from g4 grammar (produced by running `pnpm antlr4`)
--   `src/parser`: Implementations of SQL Parser classes
--   `src/parser/common`: Base classes and utility methods for SQL Parsers
--   `test`: Unit tests
--   `benchmark`: Benchmark tests
+-   `src/grammar`: 存放 g4 文件（语法文件）
+-   `src/lib`: 从 g4 语法文件生成的产物（通过运行 `pnpm antlr4` 命令生成）
+-   `src/parser`: SQL 解析器类的实现
+-   `src/parser/common`: SQL 解析器的基类和工具方法
+-   `test`: 单元测试
+-   `benchmark`: 性能基准测试
 
-## How to Add a New SQL Language
+## 如何添加一种新的 SQL 语言
 
-1. **Add New Grammar Files**
+1. **添加新的语法文件**
    
-   Add the new g4 grammar file to `src/grammar/<SQL name>`. Name the file in PascalCase. The grammar rules within the file should adhere to the following:
+   将新的 g4 语法文件添加到 `src/grammar/<SQL name>`，语法文件命名采用大驼峰格式，语法文件内的语法规则需要符合以下要求：
    
-    - The root rule should be named `program`.
-    - Support parsing multiple SQL statements.
-    - Enable [case-insensitive options](https://github.com/antlr/antlr4/blob/dev/doc/options.md#caseinsensitive) (if the SQL language is case-insensitive).
-    - Lexical rules for all keywords should prefix with `KW_` (e.g., `KW_SELECT: 'SELECT';`). This aids in differentiating keyword lexical rules for autocomplete functionality.
+    - 根规则统一命名为 `program`；
+    - 支持解析多条 SQL 语句；
+    - 开启[忽略大小写选项](https://github.com/antlr/antlr4/blob/dev/doc/options.md#caseinsensitive)（如果该 SQL 语言不区分大小写）；
+```
+// Modified entrypoint
+program
+    : statements* EOF
+    ;
 
-2. **Generate Files from Grammar**
+statements
+    : singleStatement
+    ;
 
-   Run the following command to generate files from the new grammar:
+```
+
+2. **从语法文件生成文件**
+
+   运行以下命令从新的语法文件生成相应的文件：
    
     ```bash
     pnpm antlr4 --lang <SQL name>
     ```
 
-   Check that the corresponding Lexer, Parser, Listener, and Visitor files are generated in the `src/lib/<SQL name>/` directory.
+   确认在 `src/lib/<SQL name>/` 目录下生成了相应的 Lexer、Parser、Listener 和 Visitor 文件。
 
-3. **Implement SQL Parser Class**
+3. **实现 SQL 解析器类**
 
-   Create a file `src/parser/<SQL name>/index.ts` and implement the corresponding SQL Parser class. This class should extend from the `BasicSQL` base class. Initially, implement the `createLexerFromCharStream` and `createParserFromTokenStream` methods; other methods can be left empty for now.
+   创建文件 `src/parser/<SQL name>/index.ts` 并实现相应的 SQL 解析器类，该类应继承自 `BasicSQL` 基类，首先实现 `createLexerFromCharStream` 和 `createParserFromTokenStream` 方法，其他方法可以暂时为空。
 
-4. **Add Basic Unit Tests**
+4. **添加基础单元测试**
 
-   Add basic unit tests in `test/parser/<SQL name>` for:
+   在 `test/parser/<SQL name>` 下添加基础单元测试，包括：
    
-    - Lexer
-    - Visitor
-    - Listener
-    - `parser.validate` method
+    - 词法分析器
+    - 访问者
+    - 监听器
+    - `parser.validate` 方法
+
+   你可以参考其他 SQL 解析器的单元测试。
+
+5. **SQL 语法单元测试**
+
+   在 `test/parser/<SQL name>/syntax` 目录下添加 SQL 语法的单元测试，确保**覆盖所有 SQL 语法规则**，建议根据官方语法文档逐条添加测试，以确保语法文件的准确性。
+
+6. **实现 SQLSplitListener**
+
+   实现 `SQLSplitListener` 并在 SQL 解析器类中添加 `splitListener` getter，同时添加 `parser.splitSQLByStatement` 方法的单元测试，用于将 SQL 按语句切分。
+
+7. **自动补全功能**
+
+   实现自动补全功能所需的 `processCandidates` 和 `preferredRules` 方法，在开始这一步之前，需要熟悉 [antlr4-c3](https://github.com/mike-lischke/antlr4-c3)，然后在 `test/parser/<SQL name>/suggestion` 目录下添加与自动补全相关的单元测试。
+
+8. **上下文信息收集**
+
+   实现 `SQLEntityCollector` 类和 `createEntityCollector` 方法，用于收集 SQL 上下文信息，从而增强自动补全功能，详情请参考[这里](https://github.com/DTStack/dt-sql-parser/discussions/250#discussioncomment-8215715)，然后在 `test/parser/<SQL name>/contextCollect` 目录下添加实体收集方法的单元测试。
+
+## 语法文件来源
+
+SQL 语法文件通常较为复杂，如果你想在 dt-sql-parser 中添加一种新的 SQL，不建议从头开始编写，可以考虑以下来源，按推荐顺序排列：
+
+1. **SQL 官方仓库**：
    
-   You can reference tests from other SQL parsers.
+   有些 SQL 官方仓库使用 Antlr4 作为 SQL 解析器，可以在其源码中找到对应的语法文件，例如：
+    - [IoTDB Tree](https://github.com/apache/iotdb/blob/master/iotdb-core/antlr/src/main/antlr4/org/apache/iotdb/db/qp/sql/IoTDBSqlParser.g4)
+    - [IoTDB Table](https://github.com/apache/iotdb/blob/master/iotdb-core/relational-grammar/src/main/antlr4/org/apache/iotdb/db/relational/grammar/sql/RelationalSql.g4)
 
-5. **SQL Syntax Unit Tests**
+   来自官方仓库的语法文件通常最为可靠、稳定且性能较好。
 
-   Add unit tests for SQL syntax in the `test/parser/<SQL name>/syntax` directory. Ensure coverage of **all** SQL syntax rules. It is recommended to add tests based on the official grammar documentation to ensure accuracy.
-
-6. **Implement SQLSplitListener**
-
-   Implement the `SQLSplitListener` and add the `splitListener` getter in the SQL Parser class. Also, add unit tests for the `parser.splitSQLByStatement` method, which splits SQL into individual statements.
-
-7. **Autocomplete Features**
-
-   Implement methods `processCandidates` and `preferredRules` for autocomplete functionality. Familiarize yourself with [antlr4-c3](https://github.com/mike-lischke/antlr4-c3). Then, add autocomplete-related unit tests in `test/parser/<SQL name>/suggestion`.
-
-8. **Context Information Collection**
-
-   Implement the `SQLEntityCollector` class and the `createEntityCollector` method in the SQL Parser class for SQL context information collection. This enhances the autocomplete functionality. For more details, refer to [here](https://github.com/DTStack/dt-sql-parser/discussions/250#discussioncomment-8215715). 
+2. **grammar-v4 仓库**：
    
-   Then, add tests for entity collection methods in `test/parser/<SQL name>/contextCollect`.
+   这是 Antlr 官方维护的语法文件仓库，包含多种 SQL 语法文件，这里的文件相对可靠。
 
-## Sources for Grammar Files
-
-SQL grammar files can be quite complex. If you want to add a new SQL language to dt-sql-parser, it is not recommended to start from scratch. Consider the following sources, listed in order of preference:
-
-1. **Official SQL Repositories**:
+3. **社区/其他开源仓库**：
    
-   Some official SQL repositories use Antlr4 for SQL parsing. You can find the corresponding grammar files in their source code. For example:
-    - [TrinoSQL](https://github.com/trinodb/trino/blob/385/core/trino-parser/src/main/antlr4/io/trino/sql/parser/SqlBase.g4)
-    - [SparkSQL](https://github.com/apache/spark/blob/v3.5.0/sql/api/src/main/antlr4/org/apache/spark/sql/catalyst/parser/SqlBaseParser.g4)
-
-   Grammar files from official repositories are generally the most reliable, stable, and performant.
-
-2. **Grammar-v4 Repository**:
-   
-   This is the official grammar file repository maintained by Antlr. It includes a variety of SQL grammar files. The files here are typically reliable.
-
-3. **Community/Other Open Source Repositories**:
-   
-   Grammar files obtained from the community or other open source repositories may be less reliable and often require significant time to fix grammar issues.
+   从社区或其他开源仓库获取的语法文件可能不太可靠，可能需要大量时间来修复语法规则。

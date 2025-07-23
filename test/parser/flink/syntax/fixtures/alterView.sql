@@ -1,8 +1,0 @@
-ALTER VIEW v1 RENAME TO v2;
-
-ALTER VIEW v1 AS
-SELECT
-    c1,
-    c2
-FROM
-    tbl;

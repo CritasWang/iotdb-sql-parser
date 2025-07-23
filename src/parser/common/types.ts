@@ -48,6 +48,14 @@ export enum EntityContextType {
     TABLE_PROPERTY_KEY = 'tablePropertyKey',
     /** table property value when creating table*/
     TABLE_PROPERTY_VALUE = 'tablePropertyValue',
+    /** timeseries path in IoTDB */
+    TIMESERIES = 'timeseries',
+    /** timeseries path that will be created in IoTDB */
+    TIMESERIES_CREATE = 'timeseriesCreate',
+    /** device path in IoTDB */
+    DEVICE = 'device',
+    /** device path that will be created in IoTDB */
+    DEVICE_CREATE = 'deviceCreate',
 }
 
 /**

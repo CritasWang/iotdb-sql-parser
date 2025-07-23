@@ -1,3 +1,0 @@
-DROP CATALOG catalog1;
-
-DROP CATALOG IF EXISTS catalog2;

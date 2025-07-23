@@ -1,85 +1,73 @@
-# dt-sql-parser
+# iotdb-sql-parser
 
 [![NPM version][npm-image]][npm-url] [![NPM downloads][download-img]][download-url] [![Chat][online-chat-img]][online-chat-url]
 
-[npm-image]: https://img.shields.io/npm/v/dt-sql-parser.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/dt-sql-parser
+[npm-image]: https://img.shields.io/npm/v/iotdb-sql-parser.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/iotdb-sql-parser
 
-[download-img]: https://img.shields.io/npm/dm/dt-sql-parser.svg?style=flat
-[download-url]: https://www.npmjs.com/package/dt-sql-parser
+[download-img]: https://img.shields.io/npm/dm/iotdb-sql-parser.svg?style=flat
+[download-url]: https://www.npmjs.com/package/iotdb-sql-parser
 
-[online-chat-img]: https://img.shields.io/discord/920616811261743104?logo=Molecule
-[online-chat-url]: https://discord.gg/uVvq6mfPfa
 
-English | [简体中文](./README-zh_CN.md)
+iotdb-sql-parser 是一个基于 [ANTLR4](https://github.com/antlr/antlr4) 开发的， 针对大数据领域的 **SQL Parser** 项目。通过[ANTLR4](https://github.com/antlr/antlr4) 生成的 Parser、Visitor 和 Listener，我们可以轻松的做到对 SQL 语句的 **词法分析**（Lexer)、**语法分析**（Parser）、**遍历 AST** 节点等功能。
 
-dt-sql-parser is a **SQL Parser** project built with [ANTLR4](https://github.com/antlr/antlr4), and it's mainly for the **BigData** field. The [ANTLR4](https://github.com/antlr/antlr4) generated the basic Parser, Visitor, and Listener, so it's easy to complete the **Lexer**, **Parser**, **traverse the AST**, and so on features.
+> **项目来源**: 本项目基于 [DTStack/dt-sql-parser](https://github.com/DTStack/dt-sql-parser) 修改，专注于 IoTDB SQL 解析功能。
 
-Additionally, it provides advanced features such as **SQL Validation**, **Code Completion** and **Collecting Table and Columns in SQL**.
+此外，还提供了一些高级功能，例如 **SQL 校验**、 **自动补全**、**收集表名字段名** 等。
 
-**Supported SQL**:
+**已支持的 SQL 类型：**
 
-- MySQL
-- Flink
-- Spark
-- Hive
-- PostgreSQL
-- Trino
-- Impala
+- IoTDB
 
->[!TIP]
->This project is the default for Typescript target, also you can try to compile it to other languages if you need.
+> 提示：当前所有的 SQL Parser 是 `Typescript` 语言版本，如果有需要，可以尝试编译 Grammar 文件到其他目标语言。
 
 <br/>
 
-## Integrating SQL Parser with Monaco Editor
-
-We also have provided [monaco-sql-languages](https://github.com/DTStack/monaco-sql-languages) to easily to integrate `dt-sql-parser` with `monaco-editor`.
+## 与 MonacoEditor 集成
+我们将会提供[monaco-iotdb-languages](https://github.com/CritasWang/monaco-iotdb-languages)，通过它你可以轻易的将`iotdb-sql-parser`与`monaco-editor`集成。
 
 <br/>
 
-## Installation
+## 安装
 
 ```bash
 # use npm
-npm i dt-sql-parser --save
+npm i iotdb-sql-parser --save
 
 # use yarn
-yarn add dt-sql-parser
+yarn add iotdb-sql-parser
 ```
 
 <br/>
 
-## Usage
-We recommend learning the fundamentals usage before continuing. The dt-sql-parser library provides SQL classes for different types of SQL.
-```javascript
-import { MySQL, FlinkSQL, SparkSQL, HiveSQL, PostgreSQL, TrinoSQL, ImpalaSQL } from 'dt-sql-parser';
+## 使用
+在开始使用前，需要先了解基本用法。`iotdb-sql-parser` 为不同类型的 SQL 分别提供相应的 SQL 类：
+```typescript
+import { IoTDBTreeSQL, IoTDBTableSQL } from 'iotdb-sql-parser';
 ```
 
-Before using syntax validation, code completion, and other features, it is necessary to instantiate the Parser of the relevant SQL type.
-For instance, one can consider using `MySQL` as an example:
-```javascript
-const mysql = new MySQL();
+在使用语法校验，自动补全等功能之前，需要先实例化对应 SQL 类，以 `IoTDBTableSQL` 为例：
+```typescript
+const iotdbTable = new IoTDBTableSQL();
 ```
 
-The following usage examples will utilize the `MySQL`, and the Parser for other SQL types will be used in a similar manner as `MySQL`.
+下文中的使用示例将使用 `IoTDBTableSQL`，其他 SQL 类型的 Parser 使用方式与`IoTDBTableSQL` 相同。
 
-### Syntax Validation
-First instanced a Parser object, then call the **validate** method on the SQL instance to validate the sql content, if failed returns an array includes **error** message.
+### 语法校验（Syntax Validation）
+先实例化 SQL 类，然后调用 SQL 实例上的 `validate` 方法对 SQL 语句进行校验，如果校验失败，则返回一个包含 `error` 信息的数组。
+```typescript
+import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-```javascript
-import { MySQL } from 'dt-sql-parser';
-
-const mysql = new MySQL();
+const iotdbTable = new IoTDBTableSQL();
 const incorrectSql = 'selec id,name from user1;';
-const errors = mysql.validate(incorrectSql);
+const errors = iotdbTable.validate(incorrectSql);
 
 console.log(errors); 
 ```
 
-*output:*
+*输出：*
 
-```javascript
+```typescript
 /*
 [
   {
@@ -87,30 +75,30 @@ console.log(errors);
     endLine: 1,
     startCol: 0,
     startLine: 1,
-    message: "..."
+    message: "...“
   }
 ]
 */
 ```
 
 
-### Tokenizer
+### 词法分析（Tokenizer）
 
-Call the `getAllTokens` method on the SQL instance:
+通过调用 SQL 实例上的 `getAllTokens`方法，可以对 SQL 语句进行词法分析，获取所有的 Tokens 对象：
 
-```javascript
-import { MySQL } from 'dt-sql-parser';
+```typescript
+import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-const mysql = new MySQL()
+const iotdbTable = new IoTDBTableSQL();
 const sql = 'select id,name,sex from user1;'
-const tokens = mysql.getAllTokens(sql)
+const tokens = iotdbTable.getAllTokens(sql);
 
-console.log(tokens)
+console.log(tokens);
 ```
 
-*output:*
+*输出：*
 
-```javascript
+```typescript
 /*
 [
   {
@@ -129,18 +117,18 @@ console.log(tokens)
 */
 ```
 
-### Visitor
+### 访问者模式（Visitor）
 
-Traverse the tree node by the Visitor:
+使用 Visitor 模式访问 AST 中的指定节点，并计算出结果：
 
 ```typescript
-import { MySQL, MySqlParserVisitor } from 'dt-sql-parser';
+import { IoTDBTableSQL, RelationalSqlParserVisitor } from 'iotdb-sql-parser';
 
-const mysql = new MySQL();
+const iotdbTable = new IoTDBTableSQL();
 const sql = `select id, name from user1;`;
-const parseTree = mysql.parse(sql);
+const parseTree = iotdbTable.parse(sql);
 
-class MyVisitor extends MySqlParserVisitor<string> {
+class MyVisitor extends RelationalSqlParserVisitor<string> {
     defaultResult(): string {
         return '';
     }
@@ -160,26 +148,28 @@ const result = visitor.visit(parseTree);
 console.log(result);
 ```
 
-*output:*
+*输出：*
 
-```javascript
+```typescript
 /*
 user1
 */
 ```
 
-### Listener
+> 提示：使用 Visitor 模式时，节点的方法名称可以在对应 SQL 目录下的 Visitor 文件中查找
 
-Access the specified node in the AST by the Listener
+### 监听器（Listener）
+
+Listener 模式，利用 [ANTLR4](https://github.com/antlr/antlr4) 提供的 `ParseTreeWalker` 对象遍历 AST，进入各个节点时调用对应的方法。
 
 ```typescript
-import { MySQL, MySqlParserListener } from 'dt-sql-parser';
+import { IoTDBTableSQL, RelationalSqlParserListener } from 'iotdb-sql-parser';
 
-const mysql = new MySQL();
+const iotdbTable = new IoTDBTableSQL();
 const sql = 'select id, name from user1;';
-const parseTree = mysql.parse(sql);
+const parseTree = iotdbTable.parse(sql);
 
-class MyListener extends MySqlParserListener {
+class MyListener extends RelationalSqlParserListener {
     result = '';
     enterTableName = (ctx): void => {
         this.result = ctx.getText();
@@ -187,35 +177,34 @@ class MyListener extends MySqlParserListener {
 }
 
 const listener = new MyListener();
-mysql.listen(listener, parseTree);
+iotdbTable.listen(listener, parseTree);
 
 console.log(listener.result)
 ```
 
-*output:*
+*输出：*
 
-```javascript
+```typescript
 /*
 user1
 */
 ```
 
-### Splitting SQL statements
-Take `FlinkSQL` as an example, call the `splitSQLByStatement` method on the SQL instance:
+### SQL 按语句切割
+调用 SQL 实例上的 `splitSQLByStatement` 方法，以 `IoTDBTableSQL` 为例：
+```typescript
+import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-```javascript
-import { FlinkSQL } from 'dt-sql-parser';
-
-const flink = new FlinkSQL();
+const iotdbTable = new IoTDBTableSQL();
 const sql = 'SHOW TABLES;\nSELECT * FROM tb;';
-const sqlSlices = flink.splitSQLByStatement(sql);
+const sqlSlices = iotdbTable.splitSQLByStatement(sql);
 
 console.log(sqlSlices)
 ```
 
-*output:*
+*输出：*
 
-```javascript
+```typescript
 /*
 [
   {
@@ -240,41 +229,45 @@ console.log(sqlSlices)
 */
 ```
 
-### Code Completion
-Obtaining code completion information at a specified position in SQL.
+### 自动补全（Code Completion）
+在 sql 文本的指定位置上获取自动补全信息，以 `IoTDBTableSQL` 为例，调用 SQL 实例上的 `getSuggestionAtCaretPosition` 方法，传入 sql 文本和指定位置的行列号：
 
-Call the `getAllEntities` method on the SQL instance, pass the SQL content and the row and column numbers indicating the position where code completion is desired. The following are some additional explanations about [CaretPosition](#caretposition-of-code-completion).
-+ **keyword candidates list**
+> 下文中有一些关于[自动补全位置](#自动补全功能的-caretposition)的补充说明。
 
-    ```javascript
-    import { FlinkSQL } from 'dt-sql-parser';
++ **获取关键字候选项列表**
+
+    ```typescript
+    import { IoTDBTableSQL } from 'iotdb-sql-parser';
   
-    const flink = new FlinkSQL();
+    const iotdbTable = new IoTDBTableSQL();
     const sql = 'CREATE ';
-    const pos = { lineNumber: 1, column: 16 }; // the end position
-    const keywords = flink.getSuggestionAtCaretPosition(sql, pos)?.keywords;
+    const pos = { lineNumber: 1, column: 16 }; // 最后一个位置
+    const keywords = iotdbTable.getSuggestionAtCaretPosition(sql, pos)?.keywords;
   
     console.log(keywords);
     ```
-    *output:*
-    ```javascript
+    *输出：*
+
+    ```typescript
     /*
     [ 'CATALOG', 'FUNCTION', 'TEMPORARY', 'VIEW', 'DATABASE', 'TABLE' ] 
-    */
+    */ 
     ```
-+  **Obtaining information related to grammar completion**
-    ```javascript
-    import { FlinkSQL } from 'dt-sql-parser';
++ **获取语法相关自动补全信息**
+    ```typescript
+    import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-    const flink = new FlinkSQL();
+    const iotdbTable = new IoTDBTableSQL();
     const sql = 'SELECT * FROM tb';
-    const pos = { lineNumber: 1, column: 16 }; // after 'tb'
-    const syntaxSuggestions = flink.getSuggestionAtCaretPosition(sql, pos)?.syntax;
-
+    const pos = { lineNumber: 1, column: 16 }; // tb 的后面
+    const syntaxSuggestions = iotdbTable.getSuggestionAtCaretPosition(sql, pos)?.syntax;
+  
     console.log(syntaxSuggestions);
     ```
-    *output:*
-    ```javascript
+
+    *输出：*
+
+    ```typescript
     /*
     [
       {
@@ -306,24 +299,22 @@ Call the `getAllEntities` method on the SQL instance, pass the SQL content and t
     ]
     */
     ```
-The grammar-related code completion information returns an array, where each item represents what grammar can be filled in at that position. For example, the output in the above example represents that the position can be filled with either a **table name** or **a view name**. In this case, `syntaxContextType` represents the type of grammar that can be completed, and `wordRanges` represents the content that has already been filled.
+语法相关自动补全信息返回一个数组，数组中每一项代表该位置可以填写什么语法，比如上例中的输出结果代表该位置可以填写**表名**或者**视图名称**。其中 `syntaxContextType` 是可以补全的语法类型，`wordRanges` 是已经填写的内容。
 
-
-### Get all entities in SQL (e.g. table, column)
-Call the `getAllEntities` method on the SQL instance, and pass in the sql text and the row and column numbers at the specified location to easily get them.
-
+### 获取 SQL 中出现的实体（表名、字段名等）
+调用 SQL 实例上的 `getAllEntities` 方法，传入 sql 文本和指定位置的行列号即可轻松获取。
 ```typescript
-  import { FlinkSQL } from 'dt-sql-parser';
+  import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-  const flink = new FlinkSQL();
+  const iotdbTable = new IoTDBTableSQL();
   const sql = 'SELECT * FROM tb;';
   const pos = { lineNumber: 1, column: 16 }; // tb 的后面
-  const entities = flink.getAllEntities(sql, pos);
+  const entities = iotdbTable.getAllEntities(sql, pos);
 
   console.log(entities);
 ```
 
-*output*
+*输出*
 
 ```typescript
 /*
@@ -355,24 +346,23 @@ Call the `getAllEntities` method on the SQL instance, and pass in the sql text a
 */
 ```
 
-Position is not required, if the position is passed, then in the collected entities, if the entity is located under the statement where the corresponding position is located, then the statement object to which the entity belongs will be marked with `isContainCaret`, which can help you quickly filter out the required entities when combined with the code completion function.
+行列号信息不是必传的，如果传了行列号信息，那么收集到的实体中，如果实体位于对应行列号所在的语句下，那么实体的所属的语句对象上会带有 `isContainCaret` 标识，这在与自动补全功能结合时，可以帮助你快速筛选出需要的实体信息。
 
-### Get semantic context information
 
-Call the `getSemanticContextAtCaretPosition` method on the SQL instance, passing in the sql text and the line and column numbers at the specified position, for example:
-
+### 获取语义上下文信息
+调用 SQL 实例上的 `getSemanticContextAtCaretPosition` 方法，传入 sql 文本和指定位置的行列号, 例如：
 ```typescript
-import { HiveSQL } from 'dt-sql-parser';
+import { IoTDBTableSQL } from 'iotdb-sql-parser';
 
-const hive = new HiveSQL();
+const iotdbTable = new IoTDBTableSQL();
 const sql = 'SELECT * FROM tb;';
-const pos = { lineNumber: 1, column: 18 }; // after 'tb;'
-const semanticContext = hive.getSemanticContextAtCaretPosition(sql, pos);
+const pos = { lineNumber: 1, column: 18 }; // 'tb;' 的后面
+const semanticContext = iotdbTable.getSemanticContextAtCaretPosition(sql, pos);
 
 console.log(semanticContext);
 ```
 
-*output*
+*输出*
 
 ```typescript
 /*
@@ -382,115 +372,116 @@ console.log(semanticContext);
 */
 ```
 
-Currently, the semantic context information that can be collected is as follows. If there are more requirements, please submit an [issue](https://github.com/DTStack/dt-sql-parser/issues).
+目前能收集到的语义上下文信息如下，如果有更多的需求，欢迎提[issue](https://github.com/DTStack/iotdb-sql-parser/issues)
+- `isStatementBeginning` 当前输入位置是否为一条语句的开头
 
-- `isStatementBeginning` Whether the current input position is the beginning of a statement
+默认情况下，`isStatementBeginning` 的收集策略为`SqlSplitStrategy.STRICT`
 
-The **default strategy** for `isStatementBeginning` is `SqlSplitStrategy.STRICT`
+有两种可选策略:
+- `SqlSplitStrategy.STRICT` 严格策略, 仅以语句分隔符`;`作为上一条语句结束的标识
+- `SqlSplitStrategy.LOOSE` 宽松策略, 以语法解析树为基础分割SQL
 
-There are two optional strategies:
-- `SqlSplitStrategy.STRICT` Strict strategy, only the statement delimiter `;` is used as the identifier for the end of the previous statement
-- `SqlSplitStrategy.LOOSE` Loose strategy, based on the syntax parsing tree to split SQL
-
-The difference between the two strategies:
-For example, if the input SQL is:
+两种策略的差异：
+如输入SQL为
 ```sql
 CREATE TABLE tb (id INT)
 
 SELECT
 ```
-In the `SqlSplitStrategy.STRICT` strategy, `isStatementBeginning` is `false`, because the CREATE statement is not terminated by a semicolon.
+CREATE语句后未添加分号，那么当获取SELECT后的语义上下文时，
+在`SqlSplitStrategy.STRICT`策略下`isStatementBeginning` 为`false`, 因为CREATE语句未以分号结尾，那么会被认为这条语句尚未结束;
+在`SqlSplitStrategy.LOOSE`策略下`isStatementBeginning` 为`true`, 因为语法解析树中这条SQL被拆分成了CREATE独立语句与SELECT独立语句。
 
-In the `SqlSplitStrategy.LOOSE` strategy, `isStatementBeginning` is `true`, because the syntax parsing tree splits the SQL into two independent statements: CREATE and SELECT.
-
-You can set the strategy through the third `options` parameter:
+可以通过第三个`options`参数设置策略:
 ```typescript
-hive.getSemanticContextAtCaretPosition(sql, pos, { splitSqlStrategy: SqlSplitStrategy.LOOSE });
+iotdbTable.getSemanticContextAtCaretPosition(sql, pos, { splitSqlStrategy: SqlSplitStrategy.LOOSE });
 ```
 
-### Other API
+### 其他 API
 
-- `createLexer` Create an instance of Antlr4 Lexer and return it;
-- `createParser` Create an instance of Antlr4 parser and return it;
-- `parse` Parses the input SQL and returns the parse tree;
+- `createLexer` 创建一个 Antlr4 Lexer 实例并返回；
+- `createParser` 创建一个 Antlr4 Parser 实例并返回；
+- `parse` 解析输入的 sql，并返回解析树；
 
 <br/>
 
-## Position and Range
-Some return results of the APIs provided by `dt-sql-parser` contain text information, among which the range and start value of line number, column number and index may cause some confusion.
+## 关于文本位置和文本范围
+`iotdb-sql-parser` 提供的部分 API 的返回结果中包含文本信息，其中关于行号、列数以及索引的范围和起始值可能会带来一些困惑。
 
-### Index
-The index starts at 0. In the programming field, it is more intuitive.
+### 索引（index）
+索引从 0 开始，在编程领域，索引从 0 开始更符合直觉
 
 ![index-image](./docs/images/index.png)
 
-For an index range, the start index starts from 0 and ends with n-1, as shown in the figure above, an index range of blue text should be represented as follows:
+对于一个索引范围，起始索引从 0 开始，以 n-1 结束，如上图中，一个圈定蓝色文本的索引范围应该这样表示：
 
-```javascript
+```typescript
 {
     startIndex: 0,
     endIndex: 3
 }
 ```
 
-### Line
-The line starts at 1.
+### 行号（line）
+行号（line）从 1 开始
 
 ![line-image](./docs/images/line.png)
 
-For a range of multiple lines, the line number starts from 1 and ends with n. A range of the first and second lines is represented as follows:
-
-```javascript
+对于一个圈定多行的范围，行号从 1 开始，以 n 结束，一个圈定第一行和第二行的范围这样表示：
+```typescript
 {
     startLine: 1,
     endLine: 2
 }
 ```
 
-### Column 
-The column also starts at 1.
+### 列数（column）
+列数也从 1 开始
 
 ![column-image](./docs/images/column.png)
 
-It is easier to understand by comparing the column number with the cursor position of the editor. For a range of multiple columns, the column number starts from 1 and ends with n+1, as shown in the figure above, a range of blue text columns is represented as follows:
+将列数类比为编辑器的光标位置会更加容易理解。对于一个圈定多列的范围，列数从 1 开始，以 n+1 结束，如上图中，一个圈定蓝色文本的列数范围这样表示：
 
-```javascript
+```typescript
 {
     startColumn: 1,
     endColumn: 5
 }
 ```
 
-### CaretPosition Of Code Completion
-The code completion of `dt-sql-parser` was designed to be used in the editor, so the format of the second parameter (CaretPosition) of the `getSuggestionAtCaretPosition` method is line and column number instead of character position index. This makes it easier to integrate the code completion into the editor. For the editor, it only needs to get the text content and cursor position in the editor at a specific time to call the code completion of `dt-sql-parser`, without any additional calculation.
+### 自动补全功能的 CaretPosition
+iotdb-sql-parser 的自动补全功能在设计之初就是为了在编辑器中使用，所以 `getSuggestionAtCaretPosition` 方法的第二个参数（位置信息）的格式为行列号而不是字符位置索引。这可以让自动补全功能更容易的集成到编辑器中。对于编辑器来说，只需要在特定的时机获取编辑器内的文本内容以及光标位置即可调用 `iotdb-sql-parser` 的自动补全功能，而不需要任何额外的计算。
 
-But in some other scenarios, you may need to get the caret position required by the code completion through conversion or calculation. Then, there are some precautions that you may need to care about before that.
+但是在一些其他场景下，你可能需要通过转换或者计算来得到自动补全功能所需要的位置信息，那么在此之前，有一些注意事项可能是你需要关心的。
 
-The code completion of `dt-sql-parser` depends on [antlr4-c3](https://github.com/mike-lischke/antlr4-c3), which is a great library. The code completion of `dt-sql-parser` is just encapsulated and converted based on antlr4-c3, including converting the line and column number information into the token index required by antlr4-c3, as shown in the figure below:
+iotdb-sql-parser 的自动补全功能依赖于 [antlr4-c3](https://github.com/mike-lischke/antlr4-c3)，这是一个很棒的库。iotdb-sql-parser 的自动补全功能只是基于 antlr4-c3 做了一些封装和转换，包括将行列号信息转换成 antlr4-c3 需要的 token 索引，以下图为例：
 
 ![column-image](./docs/images/token.png)
 
-Regard the column in the figure as the cursor position, and put this text into the editor, you will get 13 possible cursor positions, while for dt-sql-parser, this text will generate 4 Tokens after being parsed. An important strategy of the code completion is: **When the cursor (CaretPosition) has not completely left a Token, dt-sql-parser thinks that this Token has not been completed, and the code completion will infer what can be filled in the position of this Token.**
+将图中的 column 视作为光标位置，这段文本放到编辑器中，会得到 13 个可能的光标位置，而对于 iotdb-sql-parser 来说，这段文本被解析后会生成 4 个 Token。自动补全功能的一个重要策略是：**当光标（自动补全位置）还没有完全离开某个 Token 时，iotdb-sql-parser 就认为这个 Token 还没有完成，自动补全功能将会去推断这个 Token 所在的位置可以填什么。**
 
-For example, if you want to know what to fill in after `SHOW` through the code completion, the caret position should be:
-
-```javascript
+举个例子，如果想要通过自动补全功能知道 `SHOW` 后面应该填什么， 那么对应的位置信息应该是：
+```typescript
 {
     lineNumber: 1,
     column: 6
 }
 ```
 
-At this time, dt-sql-parser will think that `SHOW` is already a complete Token, and it should infer what can be filled in after `SHOW`. If the column in the passed-in caret position is 5, then dt-sql-parser will think that `SHOW` has not been completed, and then infer what can be filled in the position of `SHOW`. In other words, in the figure above, `column: 5` belongs to `token: 0`, and `column: 6` belongs to `token: 1`.
+此时，iotdb-sql-parser 会认为 `SHOW` 已经是一个完整的 Token 了，应该去推断 `SHOW` 后面可以填什么。如果传入的位置信息中 column 是 5， 那么 iotdb-sql-parser 会认为 `SHOW` 还没有被完成，进而去推断 `SHOW` 的位置可以填什么。也即在上图中 `column: 5` 属于 `token: 0`，`column: 6` 属于 `token: 1`。
 
-For the editor, this strategy is also more intuitive. After the user enters `SHOW`, before pressing the space key, the user probably has not finished entering, maybe the user wants to enter something like `SHOWS`. When the user presses the space key, the editor thinks that the user wants to enter the next Token, and it is time to ask dt-sql-parser what can be filled in the next Token position.
+对于编辑器来说，这种策略也更符合直觉。当用户输入了 `SHOW` 以后，在没有敲击空格键之前，用户大概率还没有输入完成，也许用户想要输入的是 `SHOWS` 之类的。当用户敲击了空格键，编辑器会认为用户想要输入下一个 Token，是时候询问 iotdb-sql-parser 下一个 Token 位置可以填哪些东西了。
 
 <br/>
 
-## Contributing
+## 贡献指南
 
-Refer to [CONTRIBUTING](./CONTRIBUTING.md)
+[CONTRIBUTING](./CONTRIBUTING.md)
 
-## License
+## 致谢
+
+本项目基于 [DTStack/dt-sql-parser](https://github.com/DTStack/dt-sql-parser) 开发，感谢 DTStack 团队的优秀工作。
+
+## 许可证
 
 [MIT](./LICENSE)

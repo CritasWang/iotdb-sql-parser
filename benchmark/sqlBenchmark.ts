@@ -69,13 +69,8 @@ const hotRunColumns = tableColumns.filter(
  * Key is sql directory name, value is module export name.
  */
 export const languageNameMap = {
-    hive: 'HiveSQL',
-    mysql: 'MySQL',
-    flink: 'FlinkSQL',
-    spark: 'SparkSQL',
-    postgresql: 'PostgreSQL',
-    trino: 'TrinoSQL',
-    impala: 'ImpalaSQL',
+    'iotdb-tree': 'IoTDBTreeSQL',
+    'iotdb-table': 'IoTDBTableSQL',
 };
 
 export type Language = keyof typeof languageNameMap;

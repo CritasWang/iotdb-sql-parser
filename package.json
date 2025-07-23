@@ -1,20 +1,15 @@
 {
-  "name": "dt-sql-parser",
-  "version": "4.3.1",
-  "authors": "DTStack Corporation",
-  "description": "SQL Parsers for BigData, built with antlr4",
+  "name": "iotdb-sql-parser",
+  "version": "1.0.0",
+  "authors": "CritasWang, IoTDB Community",
+  "description": "SQL Parser for IoTDB, built with antlr4, based on dt-sql-parser",
   "keywords": [
     "antlr4",
     "sql",
     "parser",
+    "iotdb",
     "code-completion",
-    "hive",
-    "spark",
-    "flink",
-    "mysql",
-    "postgresql",
-    "trino",
-    "impala"
+    "time-series"
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -72,7 +67,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DTStack/dt-sql-parser.git"
+    "url": "https://github.com/CritasWang/iotdb-sql-parser.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"

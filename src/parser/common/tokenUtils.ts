@@ -25,7 +25,7 @@ export function processTokenCandidates(
 
     const isKeywordToken = (token: number): boolean => {
         const symbolicName = parser.vocabulary.getSymbolicName(token);
-        return Boolean(symbolicName?.startsWith('KW_'));
+        return Boolean(symbolicName !== null);
     };
 
     for (const [token, followSets] of tokens) {

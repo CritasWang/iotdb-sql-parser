@@ -1,1 +1,0 @@
-CREATE CATALOG c1 WITH ('key1' = 'value1', 'key2' = 'value2');

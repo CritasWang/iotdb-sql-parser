@@ -26,6 +26,8 @@ export enum StmtContextType {
     INSERT_STMT = 'insertStmt',
     CREATE_FUNCTION_STMT = 'createFunctionStmt',
     ALTER_TABLE_STMT = 'alterTableStmt',
+    /** CREATE TIMESERIES statement in IoTDB */
+    CREATE_TIMESERIES_STMT = 'createTimeseriesStmt',
 }
 
 export interface StmtContext {

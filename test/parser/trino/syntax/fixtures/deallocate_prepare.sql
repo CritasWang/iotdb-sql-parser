@@ -1,1 +1,0 @@
-DEALLOCATE PREPARE my_query;
