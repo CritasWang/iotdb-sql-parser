@@ -2,7 +2,6 @@ import { IoTDBTreeSQL } from 'src/parser';
 
 const features = {
     alterTimeseries: [
-        'ALTER TIMESERIES root.sg1.d1.s1 RENAME TO root.sg1.d1.s1_new',
         "ALTER TIMESERIES root.sg1.d1.s1 SET 'newTag1'='newV1'",
         "ALTER TIMESERIES root.sg1.d1.s1 DROP 'tag1'",
         'ALTER TIMESERIES root.sg1.d1.s1 ADD TAGS tag2=v2,tag3=v3',

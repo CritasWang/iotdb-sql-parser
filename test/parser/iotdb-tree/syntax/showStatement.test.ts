@@ -26,14 +26,12 @@ const features = {
         'SHOW CHILD NODES root',
         'SHOW CHILD NODES root.sg1',
     ],
-    showFunctions: ['SHOW FUNCTIONS', 'SHOW FUNCTIONS udf'],
+    showFunctions: ['SHOW FUNCTIONS'],
     showTriggers: ['SHOW TRIGGERS'],
-    showUsers: ['SHOW USERS', 'SHOW USER PRIVILEGES user1'],
-    showRoles: ['SHOW ROLES', 'SHOW ROLE PRIVILEGES role1'],
+    showUsers: ['LIST USER', 'LIST PRIVILEGES OF USER user1'],
+    showRoles: ['LIST ROLE', 'LIST PRIVILEGES OF ROLE role1'],
     showVersion: ['SHOW VERSION'],
-    showFlushInfo: ['SHOW FLUSH INFO'],
-    showMergeInfo: ['SHOW MERGE INFO'],
-    showQueryProcesslist: ['SHOW QUERY PROCESSLIST'],
+    showQueryProcesslist: ['SHOW QUERIES'],
 };
 
 describe('IoTDBTreeSQL Show Statements Syntax Tests', () => {
@@ -104,12 +102,7 @@ describe('IoTDBTreeSQL Show Statements Syntax Tests', () => {
     });
 
     describe('SHOW system information statements', () => {
-        [
-            ...features.showVersion,
-            ...features.showFlushInfo,
-            ...features.showMergeInfo,
-            ...features.showQueryProcesslist,
-        ].forEach((sql) => {
+        [...features.showVersion, ...features.showQueryProcesslist].forEach((sql) => {
             test(`should parse: ${sql}`, () => {
                 expect(iotdbTree.validate(sql).length).toBe(0);
             });

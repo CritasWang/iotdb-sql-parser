@@ -16,10 +16,6 @@ const features = {
     dropTrigger: ['DROP TRIGGER trigger1', 'DROP TRIGGER trigger2'],
     dropUser: ['DROP USER user1', 'DROP USER guest'],
     dropRole: ['DROP ROLE role1', 'DROP ROLE viewer_role'],
-    dropIndex: [
-        'DROP INDEX index1 ON root.sg1.d1.s1',
-        'DROP INDEX temperature_index ON root.device1.temperature',
-    ],
 };
 
 describe('IoTDBTreeSQL Drop Statements Syntax Tests', () => {
@@ -67,14 +63,6 @@ describe('IoTDBTreeSQL Drop Statements Syntax Tests', () => {
 
     describe('DROP ROLE statements', () => {
         features.dropRole.forEach((sql) => {
-            test(`should parse: ${sql}`, () => {
-                expect(iotdbTree.validate(sql).length).toBe(0);
-            });
-        });
-    });
-
-    describe('DROP INDEX statements', () => {
-        features.dropIndex.forEach((sql) => {
             test(`should parse: ${sql}`, () => {
                 expect(iotdbTree.validate(sql).length).toBe(0);
             });

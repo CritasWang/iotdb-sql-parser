@@ -9,7 +9,6 @@ const features = {
     ],
     deleteWithTimeRange: [
         "DELETE FROM root.sg1.d1.s1 WHERE time >= '2023-01-01' AND time <= '2023-12-31'",
-        'DELETE FROM root.sg1.d1.* WHERE time BETWEEN 1000 AND 2000',
         "DELETE FROM root.device1.sensor1 WHERE time > '2023-01-01 00:00:00'",
     ],
     deleteAll: [

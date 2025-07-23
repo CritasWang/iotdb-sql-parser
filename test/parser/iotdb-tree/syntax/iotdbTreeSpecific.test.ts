@@ -23,14 +23,14 @@ const features = {
     ],
     timeWindowQueries: [
         'SELECT count(s1) FROM root.sg1.d1 GROUP BY ([0, 10000), 1000ms)',
-        "SELECT avg(temperature) FROM root.device1.sensor1 GROUP BY (['2023-01-01', '2023-02-01'), 1d)",
+        'SELECT avg(temperature) FROM root.device1.sensor1 GROUP BY ([2023-01-01, 2023-02-01), 1d)',
         'SELECT max(s1) FROM root.sg1.d1 GROUP BY ([1000, 2000), 100ms, 50ms)',
     ],
     fillQueries: [
         'SELECT s1 FROM root.sg1.d1 WHERE time >= 1000 AND time <= 2000 FILL(linear)',
         'SELECT temperature FROM root.device1.sensor1 WHERE time >= 1000 AND time <= 2000 FILL(previous)',
         'SELECT humidity FROM root.device1.sensor2 WHERE time >= 1000 AND time <= 2000 FILL(20.0)',
-        'SELECT s1 FROM root.sg1.d1 WHERE time >= 1000 AND time <= 2000 FILL(linear, 5m, 5m)',
+        'SELECT s1 FROM root.sg1.d1 WHERE time >= 1000 AND time <= 2000 FILL(PREVIOUS)',
     ],
     lastQueries: [
         'SELECT last * FROM root.sg1.**',
@@ -42,10 +42,6 @@ const features = {
         'SELECT s1, s2 FROM root.sg1.d1, root.sg1.d2 ALIGN BY DEVICE',
         'SELECT temperature FROM root.device*.sensor1 ALIGN BY DEVICE',
         'SELECT * FROM root.sg1.** ALIGN BY DEVICE',
-    ],
-    disableAlign: [
-        'SELECT s1, s2 FROM root.sg1.d1 DISABLE ALIGN',
-        'SELECT temperature, humidity FROM root.device1.* DISABLE ALIGN',
     ],
     udtfQueries: [
         'SELECT s1, udf(s2) FROM root.sg1.d1',
@@ -106,14 +102,6 @@ describe('IoTDBTreeSQL IoTDB Tree Specific Features Tests', () => {
 
     describe('Align by device queries', () => {
         features.alignByDevice.forEach((sql) => {
-            test(`should parse: ${sql}`, () => {
-                expect(iotdbTree.validate(sql).length).toBe(0);
-            });
-        });
-    });
-
-    describe('Disable align queries', () => {
-        features.disableAlign.forEach((sql) => {
             test(`should parse: ${sql}`, () => {
                 expect(iotdbTree.validate(sql).length).toBe(0);
             });

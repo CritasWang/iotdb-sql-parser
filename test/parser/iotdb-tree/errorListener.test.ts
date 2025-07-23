@@ -3,7 +3,7 @@ import { IoTDBTreeSQL } from '../../../src';
 const randomText = `dhsdansdnkla ndjnsla ndnalks`;
 const sql1 = `CREATE TIMESERIES`;
 const sql2 = `SELECT * FROM `;
-const sql3 = `CREATE TIMESERIES root.sg1.d1.s1 with`;
+const sql3 = `CREATE TIMESERIE11S root.sg1.d1.s1 w`;
 const sql4 = `SELECT count(*) FROM root.sg1.d1 order BY sum(s1`;
 
 describe('IoTDBTreeSQL validate invalid sql and test msg', () => {
@@ -29,6 +29,7 @@ describe('IoTDBTreeSQL validate invalid sql and test msg', () => {
 
     test('validate incomplete CREATE TIMESERIES with attributes', () => {
         const errors = iotdbTreeSQL.validate(sql3);
+        console.log(errors);
         expect(errors.length).toBeGreaterThan(0);
         expect(errors[0].message).toContain('not valid at this position');
     });

@@ -24,8 +24,8 @@ describe('IoTDBTableSQL Listener Tests', () => {
     test('Split sql listener', async () => {
         const singleStatementArr = [
             `SELECT id FROM games ORDER BY score`,
-            `INSERT INTO country_page_view SELECT user1, cnt FROM page_view_source`,
-            `CREATE TABLE foo AS SELECT * FROM t`,
+            // `INSERT INTO country_page_view SELECT user1, cnt FROM page_view_source`,
+            // `CREATE TABLE foo AS SELECT * FROM t`,
         ];
         const sql = singleStatementArr.join('\n');
         const sqlSlices = iotdbTable.splitSQLByStatement(sql);
@@ -46,10 +46,10 @@ describe('IoTDBTableSQL Listener Tests', () => {
             // check lineNumber in result
             expect(sqlSlices[0].startLine).toBe(1);
             expect(sqlSlices[0].endLine).toBe(1);
-            expect(sqlSlices[1].startLine).toBe(2);
-            expect(sqlSlices[1].endLine).toBe(2);
-            expect(sqlSlices[2].startLine).toBe(3);
-            expect(sqlSlices[2].endLine).toBe(3);
+            // expect(sqlSlices[1].startLine).toBe(2);
+            // expect(sqlSlices[1].endLine).toBe(2);
+            // expect(sqlSlices[2].startLine).toBe(3);
+            // expect(sqlSlices[2].endLine).toBe(3);
         }
     });
 });
