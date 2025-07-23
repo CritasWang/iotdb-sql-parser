@@ -44,7 +44,7 @@ statements
  */
 
 singleStatement
-    : DEBUG? statement SEMI? EOF
+    : statement SEMI?
     ;
 
 statement

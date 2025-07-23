@@ -1,6 +1,6 @@
 {
   "name": "iotdb-sql-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": "CritasWang, IoTDB Community",
   "description": "SQL Parser for IoTDB, built with antlr4, based on dt-sql-parser",
   "keywords": [

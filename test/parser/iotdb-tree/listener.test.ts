@@ -25,8 +25,8 @@ describe('IoTDBTreeSQL Listener Tests', () => {
     test('Split sql listener', async () => {
         const singleStatementArr = [
             `SHOW TIMESERIES root.device1.sensor1;`,
-            // `CREATE TIMESERIES root.sg1.d1.s1 WITH DATATYPE=FLOAT;`,
-            // `INSERT INTO root.sg1.d1(timestamp,s1) VALUES(1,1.0);`,
+            `CREATE TIMESERIES root.sg1.d1.s1 WITH DATATYPE=FLOAT;`,
+            `INSERT INTO root.sg1.d1(timestamp,s1) VALUES(1,1.0);`,
         ];
         const sql = singleStatementArr.join('\n');
         const sqlSlices = iotdbTree.splitSQLByStatement(sql);

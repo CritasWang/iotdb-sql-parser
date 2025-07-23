@@ -42,19 +42,19 @@ statements
     ;
 
 singleStatement
-    : statement EOF
+    : statement SEMICOLON?
     ;
 
 standaloneExpression
-    : expression EOF
+    : expression SEMICOLON?
     ;
 
 standaloneType
-    : type EOF
+    : type SEMICOLON?
     ;
 
 standaloneRowPattern
-    : rowPattern EOF
+    : rowPattern SEMICOLON?
     ;
 
 statement

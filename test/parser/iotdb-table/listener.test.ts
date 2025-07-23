@@ -23,9 +23,9 @@ describe('IoTDBTableSQL Listener Tests', () => {
 
     test('Split sql listener', async () => {
         const singleStatementArr = [
-            `SELECT id FROM games ORDER BY score`,
-            // `INSERT INTO country_page_view SELECT user1, cnt FROM page_view_source`,
-            // `CREATE TABLE foo AS SELECT * FROM t`,
+            `SELECT id FROM games ORDER BY score;`,
+            `INSERT INTO sensor_data (time, device_id, temperature) VALUES ('2023-01-01 10:00:00', 'device1', 25.5);`,
+            `CREATE TABLE products (id string TAG, name string ATTRIBUTE, price double FIELD, created_at TIMESTAMP FIELD)`,
         ];
         const sql = singleStatementArr.join('\n');
         const sqlSlices = iotdbTable.splitSQLByStatement(sql);
